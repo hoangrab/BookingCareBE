@@ -27,8 +27,9 @@ public class MajorService {
     }
 
     @Transactional
-    public boolean saveMajor(MajorDTO majorDTO,String image,String idImage) {
+    public boolean saveMajor(MajorDTO majorDTO,Long id,String image,String idImage) {
         Major ma = new Major();
+        if(id!=null) ma.setId(id);
         convertDTOtoEntity(majorDTO,ma);
         if(idImage != null && image != null) {
             ma.setIdImage(idImage);
@@ -38,12 +39,15 @@ public class MajorService {
         return major != null;
     }
 
+    @Transactional
+    public void deleteMajor(Long id) {
+        majorRepo.deleteById(id);
+    }
+
     private void convertDTOtoEntity(MajorDTO majorDTO, Major major) {
-        if(majorDTO.getId()!=null) {
-            major.setId(majorDTO.getId());
-            major.setName(majorDTO.getName());
-            major.setDescription(majorDTO.getDescription());
-        }
+        major.setId(majorDTO.getId());
+        major.setName(majorDTO.getName());
+        major.setDescription(majorDTO.getDescription());
     }
 
     public MajorModel convertEntityToModel(Major major) {

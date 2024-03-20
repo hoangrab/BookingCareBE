@@ -25,7 +25,7 @@ import java.util.Map;
 public class MajorController {
     private CloudinaryService cloudinaryService;
     private MajorService majorService;
-    @PostMapping(value = "creat",consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
+    @PostMapping(value = "major",consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
     @PreAuthorize("hasAuthority('ROLE_ADMIN')")
     public ResponseEntity<?> createMajor(@RequestPart("file") MultipartFile multipartFile,
                                         @Valid @RequestBody MajorDTO majorDTO) {
@@ -34,20 +34,21 @@ public class MajorController {
                 return ResponseEntity.badRequest().body(new ErrorResponse<>("Tên khoa đã tồn tại"));
             }
             Map data = cloudinaryService.upload(multipartFile);
-            majorService.saveMajor(majorDTO,data.get("url").toString(),data.get("id_url").toString());
+            majorService.saveMajor(majorDTO,null,data.get("url").toString(),data.get("id_url").toString());
             return ResponseEntity.ok().body(new SuccessResponse<>("Đã tạo thành công"));
         }catch (Exception e) {
-            return ResponseEntity.badRequest().body(new ErrorResponse<>(e.getMessage()));
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(new ErrorResponse<>(e.getMessage()));
         }
     }
 
-    @PutMapping(value = "update",consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
+    @PutMapping(value = "major/{id}",consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
     @PreAuthorize("hasAuthority('ROLE_ADMIN')")
     public ResponseEntity<?> updateMajor(@RequestPart(value = "file",required = false) MultipartFile multipartFile,
-                                        @Valid @RequestBody MajorDTO majorDTO) {
+                                        @Valid @RequestBody MajorDTO majorDTO,
+                                         @PathVariable("id") Long id) {
         try {
             String image = null, idImage = null;
-            if(!majorService.findById(majorDTO.getId())) {
+            if(!majorService.findById(id)) {
                 return ResponseEntity.status(HttpStatus.NOT_FOUND).body(new ErrorResponse<>("Khoa không tồn tại!!!"));
             }
             if(multipartFile!=null){
@@ -55,18 +56,36 @@ public class MajorController {
                 image = data.get("url").toString();
                 idImage = data.get("id_url").toString();
             }
-            majorService.saveMajor(majorDTO,image,idImage);
+            majorService.saveMajor(majorDTO,id,image,idImage);
             return ResponseEntity.ok().body(new SuccessResponse<>("Đã cập nhật thành công"));
         }catch (Exception e) {
-            return ResponseEntity.badRequest().body(e.getMessage());
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(e.getMessage());
         }
     }
 
     @GetMapping(value = "majors")
     @PreAuthorize("hasAuthority('ROLE_ADMIN')")
     public ResponseEntity<?> getAllMajor() {
-        List<MajorModel> list = new ArrayList<>();
-        list = majorService.getAll();
-        return ResponseEntity.ok(new SuccessResponse<>("Get success",list));
+        try{
+            List<MajorModel> list = new ArrayList<>();
+            list = majorService.getAll();
+            return ResponseEntity.ok(new SuccessResponse<>("Get success",list));
+        }catch (Exception e) {
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(new ErrorResponse<>(e.getMessage()));
+        }
+    }
+
+    @DeleteMapping(value = "major/{id}")
+    @PreAuthorize("hasAuthority('ROLE_ADMIN')")
+    public ResponseEntity<?> deleteMajor(@PathVariable("id") Long id) {
+        try{
+            if(!majorService.findById(id)) {
+                return ResponseEntity.status(HttpStatus.NOT_FOUND).body(new ErrorResponse<>("Id khoa không tồn tại!!!"));
+            }
+            majorService.deleteMajor(id);
+            return ResponseEntity.ok().body(new SuccessResponse<>("Đã xóa thành công khoa có id: " + id));
+        }catch (Exception e) {
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(new ErrorResponse<>(e.getMessage()));
+        }
     }
 }

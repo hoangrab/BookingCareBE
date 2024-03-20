@@ -10,7 +10,6 @@ import lombok.NoArgsConstructor;
 @NoArgsConstructor
 @AllArgsConstructor
 public class MajorDTO {
-    private Long id;
     @NotNull
     @Max(30)
     private String name;
