@@ -21,7 +21,7 @@ import java.util.List;
 @RequestMapping("/api/v1/")
 @RequiredArgsConstructor
 public class RoleController {
-    private RoleService roleService;
+    private final RoleService roleService;
 
     @PreAuthorize("hasAuthority('ROLE_ADMIN')")
     @GetMapping("/roles")

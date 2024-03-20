@@ -23,8 +23,8 @@ import java.util.Map;
 @RequestMapping("/api/v1/")
 @RequiredArgsConstructor
 public class MajorController {
-    private CloudinaryService cloudinaryService;
-    private MajorService majorService;
+    private final CloudinaryService cloudinaryService;
+    private final MajorService majorService;
     @PostMapping(value = "major",consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
     @PreAuthorize("hasAuthority('ROLE_ADMIN')")
     public ResponseEntity<?> createMajor(@RequestPart("file") MultipartFile multipartFile,

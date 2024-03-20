@@ -13,7 +13,7 @@ import java.util.stream.Collectors;
 @Service
 @RequiredArgsConstructor
 public class RoleService {
-    private RoleRepo roleRepo;
+    private final RoleRepo roleRepo;
 
     public List<RoleModel> getAll() {
         return roleRepo.findAll().stream().map(this::convertEntityToModel).collect(Collectors.toList());

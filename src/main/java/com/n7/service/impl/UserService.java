@@ -20,10 +20,10 @@ import org.springframework.stereotype.Service;
 @Service
 @RequiredArgsConstructor
 public class UserService implements IUserService {
-    private PasswordEncoder passwordEncoder;
-    private UserRepo userRepo;
-    private AuthenticationManager authenticationManager;
-    private JwtService jwtService;
+    private final PasswordEncoder passwordEncoder;
+    private final UserRepo userRepo;
+    private final AuthenticationManager authenticationManager;
+    private final JwtService jwtService;
     public UserModel login(LoginRequest loginRequest) {
         try{
             Authentication authentication = authenticationManager.authenticate(

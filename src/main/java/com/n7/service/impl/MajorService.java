@@ -14,7 +14,7 @@ import java.util.stream.Collectors;
 @Service
 @RequiredArgsConstructor
 public class MajorService {
-    private MajorRepo majorRepo;
+    private final MajorRepo majorRepo;
     public List<MajorModel> getAll(){
         return majorRepo.findAll().stream().map(this::convertEntityToModel).collect(Collectors.toList());
     }
