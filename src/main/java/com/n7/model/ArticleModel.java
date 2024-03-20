@@ -1,2 +1,4 @@
-package com.n7.dto;public class ArticleModel {
+package com.n7.model;
+
+public class ArticleModel {
 }

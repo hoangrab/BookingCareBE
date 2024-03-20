@@ -1,2 +1,4 @@
-package com.n7.service;public interface IRoleService {
+package com.n7.service;
+
+public interface IRoleService {
 }

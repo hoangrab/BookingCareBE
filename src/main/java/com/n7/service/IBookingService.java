@@ -1,2 +1,4 @@
-package com.n7.service;public class IBookingService {
+package com.n7.service;
+
+public interface IBookingService {
 }

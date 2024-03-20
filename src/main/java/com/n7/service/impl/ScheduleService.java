@@ -1,2 +1,4 @@
-package com.n7.service.impl;public class ScheduleService {
+package com.n7.service.impl;
+
+public class ScheduleService {
 }

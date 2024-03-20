@@ -1,2 +1,4 @@
-package com.n7.utils;public class ConvertTimeUtils {
+package com.n7.utils;
+
+public class ConvertTimeUtils {
 }

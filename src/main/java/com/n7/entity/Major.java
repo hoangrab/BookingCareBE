@@ -18,11 +18,14 @@ public class Major {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    @Column(length = 100)
+    @Column(length = 100,unique = true)
     private String name;
 
     @Column(length = 100)
     private String avatar;
+
+    @Column(length = 64)
+    private String idImage;
 
     @Column(length = 255)
     private String description;

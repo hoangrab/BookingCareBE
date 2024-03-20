@@ -1,2 +1,38 @@
-package com.n7.controller;public class AuthController {
+package com.n7.controller;
+
+import com.n7.model.UserModel;
+import com.n7.request.LoginRequest;
+import com.n7.request.RegisterRequest;
+import com.n7.response.BaseResponse;
+import com.n7.response.ErrorResponse;
+import com.n7.response.SuccessResponse;
+import com.n7.service.impl.JwtService;
+import com.n7.service.impl.UserService;
+import jakarta.validation.Valid;
+import lombok.RequiredArgsConstructor;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
+import org.springframework.security.authentication.BadCredentialsException;
+import org.springframework.web.bind.annotation.*;
+
+@RestController
+@RequestMapping("/auth/")
+@RequiredArgsConstructor
+public class AuthController {
+    private UserService userService;
+    private JwtService jwtService;
+    @PostMapping("login")
+    public ResponseEntity<?> login(@Valid @RequestBody LoginRequest loginRequest) {
+        try{
+            UserModel u = userService.login(loginRequest);
+            return ResponseEntity.ok().body(new SuccessResponse<>("Login success",u));
+        }catch (BadCredentialsException e) {
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(new ErrorResponse<>(e.getMessage()));
+        }
+    }
+
+    @PostMapping("register")
+    public ResponseEntity<?> register(@Valid @RequestBody RegisterRequest registerRequest) {
+        return ResponseEntity.ok().body(null);
+    }
 }

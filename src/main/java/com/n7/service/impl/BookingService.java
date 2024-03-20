@@ -1,2 +1,4 @@
-package com.n7.service.impl;public class BookingServcie {
+package com.n7.service.impl;
+
+public class BookingService {
 }

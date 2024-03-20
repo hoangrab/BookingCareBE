@@ -1,2 +1,4 @@
-package com.n7.service;public class IArticleService {
+package com.n7.service;
+
+public interface IArticleService {
 }

@@ -1,5 +1,6 @@
 package com.n7.entity;
 
+import com.n7.constant.Gender;
 import com.n7.constant.Status;
 import com.n7.constant.TimeChoose;
 import jakarta.persistence.*;
@@ -22,6 +23,24 @@ public class Booking {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
+    @Column(length = 64)
+    private String fullName;
+
+    @Column(length = 20)
+    private Date dateOfBirth;
+
+    @Column(length = 20)
+    private String phone;
+
+    @Column(length = 30)
+    private String email;
+
+    @Enumerated(EnumType.STRING)
+    private Gender gender;
+
+    @Column(length = 100)
+    private String address;
+
     @Column
     private Date date;
 
@@ -42,10 +61,6 @@ public class Booking {
 
     @CreationTimestamp
     private LocalDateTime createAt;
-
-    @OneToOne
-    @JoinColumn(name = "patient_id",referencedColumnName = "id")
-    private Patient patient;
 
     @ManyToOne
     @JoinColumn(name = "doctor_id",referencedColumnName = "id")
