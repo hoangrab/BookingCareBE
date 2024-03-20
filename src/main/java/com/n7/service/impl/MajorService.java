@@ -45,7 +45,6 @@ public class MajorService {
     }
 
     private void convertDTOtoEntity(MajorDTO majorDTO, Major major) {
-        major.setId(majorDTO.getId());
         major.setName(majorDTO.getName());
         major.setDescription(majorDTO.getDescription());
     }
