@@ -1,5 +1,6 @@
 package com.n7.service.impl;
 
+import com.n7.constant.RoleName;
 import com.n7.dto.RoleDTO;
 import com.n7.entity.Role;
 import com.n7.model.RoleModel;
@@ -19,7 +20,7 @@ public class RoleService {
         return roleRepo.findAll().stream().map(this::convertEntityToModel).collect(Collectors.toList());
     }
 
-    public boolean checkNameExits(String name) {
+    public boolean checkNameExits(RoleName name) {
         return roleRepo.findByName(name) != null;
     }
 

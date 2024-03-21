@@ -21,7 +21,7 @@ public class RegisterRequest {
     @NotNull
     @Min(value = 6,message = "length of password must longer 6")
     public String password;
-    public Long idRole = 2L;
-    @NotNull
+    public Long idRole;
+//    @NotNull
     public Long idMajor;
 }

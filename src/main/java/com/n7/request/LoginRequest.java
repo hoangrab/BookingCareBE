@@ -1,7 +1,9 @@
 package com.n7.request;
 
 import jakarta.validation.constraints.Min;
+import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
+import jakarta.validation.constraints.Size;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
@@ -10,10 +12,10 @@ import lombok.NoArgsConstructor;
 @NoArgsConstructor
 @AllArgsConstructor
 public class LoginRequest {
-    @NotNull(message = "Username can not empty")
-    @Min(value = 6,message = "Length of username must longer 6")
+    @NotBlank(message = "Username can not blank")
+    @Size(min = 6,max = 20,message = "Length of username must between 6 and 20")
     private String username;
-    @NotNull(message = "Password can not empty")
-    @Min(value = 6,message = "Length of password must longer 6")
+    @NotBlank(message = "Username can not blank")
+    @Size(min = 6,max = 20,message = "Length of password must between 6 and 20")
     private String password;
 }

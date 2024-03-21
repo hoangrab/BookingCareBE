@@ -23,7 +23,7 @@ public class UserDTO {
     @Size(min = 6,max = 64,message = "Length of password must between 6 and 64")
     private String password;
 
-    @NotBlank
+    @NotNull
     private Long idRole;
     private Long idMajor;
 }

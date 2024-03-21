@@ -1,5 +1,6 @@
 package com.n7.controller;
 
+import com.n7.constant.RoleName;
 import com.n7.dto.MajorDTO;
 import com.n7.dto.RoleDTO;
 import com.n7.model.RoleModel;
@@ -35,10 +36,10 @@ public class RoleController {
     }
 
     @PostMapping(value = "role")
-    @PreAuthorize("hasAuthority('ROLE_ADMIN')")
+//    @PreAuthorize("hasAuthority('ROLE_ADMIN')")
     public ResponseEntity<?> creatRole(@Valid @RequestBody RoleDTO roleDTO){
         try{
-            if(roleService.checkNameExits(roleDTO.getName().toString())){
+            if(roleService.checkNameExits(roleDTO.getName())){
                 return ResponseEntity.badRequest().body(new ErrorResponse<>("Tên role đã tồn tại"));
             }
             roleService.saveRole(roleDTO,null);

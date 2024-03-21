@@ -22,6 +22,9 @@ public class User {
     private Long id;
 
     @Column(length = 100)
+    private String fullname;
+
+    @Column(length = 100)
     private String username;
 
     @Column(length = 100)
@@ -29,6 +32,9 @@ public class User {
 
     @Column(length = 20)
     private String phone;
+
+    @Column(length = 50)
+    private String gmail;
 
     @Column(length = 100)
     private String avatar;

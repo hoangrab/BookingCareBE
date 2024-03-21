@@ -13,8 +13,8 @@ import lombok.NoArgsConstructor;
 @NoArgsConstructor
 @AllArgsConstructor
 public class RoleDTO {
-    @NotBlank(message = "Name of role can not blank")
-    private String name;
+    @NotNull(message = "Name of role can not blank")
+    private RoleName name;
 
     @Size(max = 64,message = "Length of description must shorter 64")
     private String description;
