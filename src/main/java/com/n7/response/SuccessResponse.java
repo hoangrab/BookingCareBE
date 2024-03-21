@@ -5,8 +5,6 @@ import lombok.Data;
 import lombok.NoArgsConstructor;
 
 @Data
-@NoArgsConstructor
-@AllArgsConstructor
 public class SuccessResponse<T> extends BaseResponse<T> {
     public SuccessResponse(String message) {
         super("success",message,null);

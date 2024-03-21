@@ -13,7 +13,7 @@ public class GlobalException {
     @ExceptionHandler(MethodArgumentNotValidException.class)
     public ResponseEntity<ErrorResponse<String>> handleValidationExceptions(MethodArgumentNotValidException ex) {
         String errorMessage = ex.getBindingResult().getAllErrors().size() > 0 ?
-                ex.getBindingResult().getAllErrors().get(0).toString() : "Unknown error, please check input";
+                ex.getBindingResult().getAllErrors().get(0).getDefaultMessage().toString() : "Unknown error, please check input";
         return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(new ErrorResponse<>(errorMessage));
     }
 }

@@ -17,6 +17,8 @@ import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
+import java.util.List;
+
 @Service
 @RequiredArgsConstructor
 public class UserService implements IUserService {
@@ -38,5 +40,14 @@ public class UserService implements IUserService {
         }catch (BadCredentialsException ex){
             throw new BadCredentialsException("Invalid username or password");
         }
+    }
+
+    public UserModel register() {
+        return null;
+    }
+
+    @Override
+    public List<User> getAllDoctorByMajor(Long id) {
+        return null;
     }
 }

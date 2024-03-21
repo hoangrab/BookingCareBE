@@ -1,7 +1,8 @@
 package com.n7.constant;
 
 public enum Status {
-    PENDING,
+    PENDING1,
+    PENDING2,
     FAILURE,
     SUCCESS
 }

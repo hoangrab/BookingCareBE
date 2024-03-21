@@ -1,7 +1,9 @@
 package com.n7.dto;
 
 import jakarta.validation.constraints.Max;
+import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
+import jakarta.validation.constraints.Size;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
@@ -10,9 +12,9 @@ import lombok.NoArgsConstructor;
 @NoArgsConstructor
 @AllArgsConstructor
 public class MajorDTO {
-    @NotNull
-    @Max(30)
+    @NotBlank(message = "Name can not blank")
+    @Size(max = 35,message = "Length of name must shorter 35")
     private String name;
-    @Max(100)
+    @Size(max = 64,message = "Length of description must longer 64")
     private String description;
 }

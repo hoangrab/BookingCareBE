@@ -1,2 +1,4 @@
-package com.n7.dto;public class NotifyDTO {
+package com.n7.dto;
+
+public class NotifyDTO {
 }
