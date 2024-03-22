@@ -48,7 +48,7 @@ public class MajorController {
                                          @PathVariable("id") Long id) {
         try {
             String image = null, idImage = null;
-            if(!majorService.findById(id)) {
+            if(!majorService.findById(id).isPresent()) {
                 return ResponseEntity.status(HttpStatus.NOT_FOUND).body(new ErrorResponse<>("Khoa không tồn tại!!!"));
             }
             if(multipartFile!=null){
@@ -79,7 +79,7 @@ public class MajorController {
     @PreAuthorize("hasAuthority('ROLE_ADMIN')")
     public ResponseEntity<?> deleteMajor(@PathVariable("id") Long id) {
         try{
-            if(!majorService.findById(id)) {
+            if(!majorService.findById(id).isPresent()) {
                 return ResponseEntity.status(HttpStatus.NOT_FOUND).body(new ErrorResponse<>("Id khoa không tồn tại!!!"));
             }
             majorService.deleteMajor(id);

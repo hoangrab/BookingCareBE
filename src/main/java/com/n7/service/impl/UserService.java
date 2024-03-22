@@ -28,10 +28,11 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
+import java.util.stream.Collectors;
 
 @Service
 @RequiredArgsConstructor
-public class UserService implements IUserService {
+public class UserService {
     private final PasswordEncoder passwordEncoder;
     private final UserRepo userRepo;
     private final RoleRepo roleRepo;
@@ -68,9 +69,13 @@ public class UserService implements IUserService {
         return userModel;
     }
 
-    @Override
-    public List<User> getAllDoctorByMajor(Long id) {
-        return null;
+    public Optional<UserModel> getDoctorById(Long id) {
+        return userRepo.findById(id).map(this::convertEntityToModel);
+    }
+
+    public List<UserModel> getAllDoctorByMajor(Long id) {
+        List<UserModel> users = userRepo.findByMajorId(id).stream().map(this::convertEntityToModel).collect(Collectors.toList());
+        return users;
     }
 
     public UserModel convertEntityToModel(User user) {

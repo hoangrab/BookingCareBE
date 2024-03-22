@@ -16,15 +16,25 @@ public class MailService {
     @Autowired
     private JavaMailSender mailSender;
 
-    public void sendMail(String email, String code) throws MailException, MessagingException {
-
+    public void sendMail(String receiver,String title, String content) throws MailException, MessagingException {
         MimeMessage message = mailSender.createMimeMessage();
         MimeMessageHelper messageHelper = new MimeMessageHelper(message);
         messageHelper.setFrom(userFrom);
-        messageHelper.setTo("Receiver");
-        messageHelper.setSubject("Title");
-        code = "Biệt đội chơi đá";
-        messageHelper.setText("<html><body><h1>Xác thực tài khoản</h1><a href='" + code + "'>VERIFY</a></body></html>",true);
+        messageHelper.setTo(receiver);
+        messageHelper.setSubject(title);
+        messageHelper.setText("<html><body><h1 style='color:red'>"+content+"</h1></body></html>",true);
         mailSender.send(message);
     }
 }
+
+/*
+
+
+
+
+
+
+
+
+
+ */

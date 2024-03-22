@@ -9,6 +9,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
+import java.util.Optional;
 import java.util.stream.Collectors;
 
 @Service
@@ -19,8 +20,8 @@ public class MajorService {
         return majorRepo.findAll().stream().map(this::convertEntityToModel).collect(Collectors.toList());
     }
 
-    public boolean findById(long id) {
-        return majorRepo.findById(id) != null;
+    public Optional findById(long id) {
+        return majorRepo.findById(id);
     }
     public boolean checkNameMajor(String name) {
         return majorRepo.findByName(name)!=null;
@@ -43,6 +44,7 @@ public class MajorService {
     public void deleteMajor(Long id) {
         majorRepo.deleteById(id);
     }
+
 
     private void convertDTOtoEntity(MajorDTO majorDTO, Major major) {
         major.setName(majorDTO.getName());
