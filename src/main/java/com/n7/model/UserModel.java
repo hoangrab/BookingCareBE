@@ -6,9 +6,8 @@ import lombok.Data;
 import lombok.NoArgsConstructor;
 
 @Data
-@AllArgsConstructor
 @NoArgsConstructor
-@JsonInclude(JsonInclude.Include.NON_EMPTY)
+//@JsonInclude(JsonInclude.Include.NON_EMPTY)
 public class UserModel {
     private Long id;
     private String avatar;
@@ -16,7 +15,6 @@ public class UserModel {
     private String userName;
     private String phone;
     private String email;
-    private String password;
     private Long roleId;
     private boolean enabled;
     private MajorModel major;

@@ -16,7 +16,4 @@ public class ArticleDTO {
     @NotNull(message = "Content can not empty")
     @Size(min = 10,max = 255,message = "Length of content must between 10 and 255")
     private String content;
-    @NotNull(message = "Gender can not null")
-    @NotEmpty(message = "Gender can not empty")
-    private Gender gender;
 }

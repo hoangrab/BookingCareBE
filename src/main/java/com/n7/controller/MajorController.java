@@ -1,23 +1,25 @@
 package com.n7.controller;
 
+import com.fasterxml.jackson.core.JsonProcessingException;
+import com.fasterxml.jackson.databind.ObjectMapper;
 import com.n7.dto.MajorDTO;
+import com.n7.entity.Major;
+import com.n7.exception.ResourceAlreadyExitsException;
 import com.n7.model.MajorModel;
 import com.n7.response.ErrorResponse;
 import com.n7.response.SuccessResponse;
 import com.n7.service.impl.CloudinaryService;
 import com.n7.service.impl.MajorService;
-import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
-import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
-import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
+import java.util.Optional;
 
 @RestController
 @RequestMapping("/api/v1/")
@@ -25,28 +27,32 @@ import java.util.Map;
 public class MajorController {
     private final CloudinaryService cloudinaryService;
     private final MajorService majorService;
-    @PostMapping(value = "major",consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
-    @PreAuthorize("hasAuthority('ROLE_ADMIN')")
+    @PostMapping(value = "major")
+//    @PreAuthorize("hasAuthority('ROLE_ADMIN')")
     public ResponseEntity<?> createMajor(@RequestPart("file") MultipartFile multipartFile,
-                                        @Valid @RequestBody MajorDTO majorDTO) {
+                                         @RequestPart("majordto") String object) {
         try {
-            if(!majorService.checkNameMajor(majorDTO.getName())){
+            ObjectMapper objectMapper = new ObjectMapper();
+            MajorDTO majorDTO = objectMapper.readValue(object,MajorDTO.class);
+            if(majorService.checkNameMajor(majorDTO.getName())){
                 return ResponseEntity.badRequest().body(new ErrorResponse<>("Tên khoa đã tồn tại"));
             }
             Map data = cloudinaryService.upload(multipartFile);
-            majorService.saveMajor(majorDTO,null,data.get("url").toString(),data.get("id_url").toString());
+            majorService.saveMajor(majorDTO,null,data.get("url").toString(),data.get("public_id").toString());
             return ResponseEntity.ok().body(new SuccessResponse<>("Đã tạo thành công"));
         }catch (Exception e) {
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(new ErrorResponse<>(e.getMessage()));
         }
     }
 
-    @PutMapping(value = "major/{id}",consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
+    @PutMapping(value = "major/{id}")
     @PreAuthorize("hasAuthority('ROLE_ADMIN')")
     public ResponseEntity<?> updateMajor(@RequestPart(value = "file",required = false) MultipartFile multipartFile,
-                                        @Valid @RequestBody MajorDTO majorDTO,
+                                         @RequestPart(value = "majordto") String object,
                                          @PathVariable("id") Long id) {
         try {
+            ObjectMapper objectMapper = new ObjectMapper();
+            MajorDTO majorDTO = objectMapper.readValue(object,MajorDTO.class);
             String image = null, idImage = null;
             if(!majorService.findById(id).isPresent()) {
                 return ResponseEntity.status(HttpStatus.NOT_FOUND).body(new ErrorResponse<>("Khoa không tồn tại!!!"));
@@ -54,21 +60,24 @@ public class MajorController {
             if(multipartFile!=null){
                 Map data = cloudinaryService.upload(multipartFile);
                 image = data.get("url").toString();
-                idImage = data.get("id_url").toString();
+                idImage = data.get("public_id").toString();
+                majorService.updateMajor(majorDTO,id,image,idImage);
             }
-            majorService.saveMajor(majorDTO,id,image,idImage);
+            majorService.updateMajor(majorDTO,id,null,null);
             return ResponseEntity.ok().body(new SuccessResponse<>("Đã cập nhật thành công"));
-        }catch (Exception e) {
+        }
+        catch (ResourceAlreadyExitsException ex) {
+            return ResponseEntity.badRequest().body(new ErrorResponse<>(ex.getMessage()));
+        }
+        catch (Exception e) {
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(e.getMessage());
         }
     }
 
     @GetMapping(value = "majors")
-    @PreAuthorize("hasAuthority('ROLE_ADMIN')")
     public ResponseEntity<?> getAllMajor() {
         try{
-            List<MajorModel> list = new ArrayList<>();
-            list = majorService.getAll();
+            List<MajorModel> list = majorService.getAll();
             return ResponseEntity.ok(new SuccessResponse<>("Get success",list));
         }catch (Exception e) {
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(new ErrorResponse<>(e.getMessage()));
@@ -76,13 +85,15 @@ public class MajorController {
     }
 
     @DeleteMapping(value = "major/{id}")
-    @PreAuthorize("hasAuthority('ROLE_ADMIN')")
+//    @PreAuthorize("hasAuthority('ROLE_ADMIN')")
     public ResponseEntity<?> deleteMajor(@PathVariable("id") Long id) {
         try{
-            if(!majorService.findById(id).isPresent()) {
+            Optional<Major> major = majorService.findById(id);
+            if(!major.isPresent()) {
                 return ResponseEntity.status(HttpStatus.NOT_FOUND).body(new ErrorResponse<>("Id khoa không tồn tại!!!"));
             }
             majorService.deleteMajor(id);
+            cloudinaryService.delete(major.get().getIdImage());
             return ResponseEntity.ok().body(new SuccessResponse<>("Đã xóa thành công khoa có id: " + id));
         }catch (Exception e) {
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(new ErrorResponse<>(e.getMessage()));

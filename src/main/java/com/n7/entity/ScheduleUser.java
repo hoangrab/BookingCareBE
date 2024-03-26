@@ -10,7 +10,7 @@ import lombok.NoArgsConstructor;
 @AllArgsConstructor
 @Entity
 @Table(name = "schedule_user")
-public class Schedule_User {
+public class ScheduleUser {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;

@@ -60,9 +60,8 @@ public class User {
     private Major major;
 
     @OneToMany(mappedBy = "user",fetch = FetchType.EAGER,cascade = CascadeType.ALL)
-    private List<Schedule_User> listSchedule = new ArrayList<>();
+    private List<ScheduleUser> listSchedule = new ArrayList<>();
 
     @OneToMany(mappedBy = "user",fetch = FetchType.LAZY,cascade = CascadeType.ALL)
     private List<Booking> listBooking = new ArrayList<>();
-
 }

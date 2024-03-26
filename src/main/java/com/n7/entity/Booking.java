@@ -27,7 +27,7 @@ public class Booking {
     private String fullName;
 
     @Column(length = 20)
-    private Date dateOfBirth;
+    private String dob;
 
     @Column(length = 20)
     private String phone;
@@ -42,13 +42,10 @@ public class Booking {
     private String address;
 
     @Column
-    private Date date;
+    private String date;
 
     @Enumerated(EnumType.STRING)
     private TimeChoose session;
-
-    @Column(length = 255)
-    private String reason;
 
     @Enumerated(EnumType.STRING)
     private Status status;
@@ -65,4 +62,18 @@ public class Booking {
     @ManyToOne
     @JoinColumn(name = "doctor_id",referencedColumnName = "id")
     private User user;
+
+    public Booking(String fullName, String dob, String phone, String email, Gender gender,
+                   String address, String date, TimeChoose session, Status status, String note) {
+        this.fullName = fullName;
+        this.dob = dob;
+        this.phone = phone;
+        this.email = email;
+        this.gender = gender;
+        this.address = address;
+        this.date = date;
+        this.session = session;
+        this.status = status;
+        this.note = note;
+    }
 }

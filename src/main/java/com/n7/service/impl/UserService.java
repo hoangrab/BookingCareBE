@@ -14,6 +14,8 @@ import com.n7.request.RegisterRequest;
 import com.n7.service.IUserService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.BadCredentialsException;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
@@ -48,6 +50,7 @@ public class UserService {
             String jwt = jwtService.generateToken((CustomUserDetail) userDetails);
             map.put("accessToken",jwt);
             map.put("roleId",String.valueOf(((CustomUserDetail) userDetails).getRoleId()));
+            map.put("userId",String.valueOf(((CustomUserDetail) userDetails).getUserId()));
             return map;
         }catch (BadCredentialsException ex){
             throw new BadCredentialsException("Invalid username or password");
@@ -69,13 +72,19 @@ public class UserService {
         return userModel;
     }
 
+    public List<UserModel> getAllDoctor(Pageable pageable) {
+        return userRepo.findAll(pageable).getContent().stream().map(this::convertEntityToModel).collect(Collectors.toList());
+    }
+
     public Optional<UserModel> getDoctorById(Long id) {
         return userRepo.findById(id).map(this::convertEntityToModel);
     }
 
-    public List<UserModel> getAllDoctorByMajor(Long id) {
-        List<UserModel> users = userRepo.findByMajorId(id).stream().map(this::convertEntityToModel).collect(Collectors.toList());
-        return users;
+    public List<UserModel> getAllDoctorByMajor(Long majorId, Pageable pageable) {
+        if(majorId!=null) return userRepo.findByMajorId(majorId,pageable).getContent()
+                .stream()
+                .map(this::convertEntityToModel).collect(Collectors.toList());
+        return getAllDoctor(pageable);
     }
 
     public UserModel convertEntityToModel(User user) {
