@@ -2,6 +2,7 @@ package com.n7.controller;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.fasterxml.jackson.databind.SerializationFeature;
 import com.n7.dto.MajorDTO;
 import com.n7.entity.Major;
 import com.n7.exception.ResourceAlreadyExitsException;
@@ -46,19 +47,23 @@ public class MajorController {
     }
 
     @PutMapping(value = "major/{id}")
-    @PreAuthorize("hasAuthority('ROLE_ADMIN')")
+//    @PreAuthorize("hasAuthority('ROLE_ADMIN')")
     public ResponseEntity<?> updateMajor(@RequestPart(value = "file",required = false) MultipartFile multipartFile,
                                          @RequestPart(value = "majordto") String object,
                                          @PathVariable("id") Long id) {
         try {
             ObjectMapper objectMapper = new ObjectMapper();
+            System.out.println(object);
             MajorDTO majorDTO = objectMapper.readValue(object,MajorDTO.class);
             String image = null, idImage = null;
-            if(!majorService.findById(id).isPresent()) {
+            System.out.println(majorDTO.getName()+"\t" + majorDTO.getDescription());
+            Major major = majorService.findById(id).get();
+            if(major==null) {
                 return ResponseEntity.status(HttpStatus.NOT_FOUND).body(new ErrorResponse<>("Khoa không tồn tại!!!"));
             }
             if(multipartFile!=null){
                 Map data = cloudinaryService.upload(multipartFile);
+                cloudinaryService.delete(major.getIdImage());
                 image = data.get("url").toString();
                 idImage = data.get("public_id").toString();
                 majorService.updateMajor(majorDTO,id,image,idImage);

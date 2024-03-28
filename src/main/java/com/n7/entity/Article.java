@@ -24,8 +24,11 @@ public class Article {
 
     private String content;
 
-    @Column(length = 64)
+    @Column(length = 128)
     private String image;
+
+    @Column(length = 64)
+    private String url_id;
 
     @UpdateTimestamp
     private LocalDateTime update_at;

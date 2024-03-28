@@ -28,4 +28,9 @@ public class Role {
 
     @OneToMany(fetch = FetchType.EAGER,mappedBy = "role")
     private List<User> users = new ArrayList<>();
+
+    public Role(RoleName roleName, String description) {
+        this.name = roleName;
+        this.description = description;
+    }
 }
