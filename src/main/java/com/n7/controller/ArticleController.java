@@ -21,6 +21,7 @@ import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
+import java.util.Base64;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
@@ -37,7 +38,9 @@ public class ArticleController {
                                          @RequestPart("articleDto") String object) {
         try {
             ObjectMapper objectMapper = new ObjectMapper();
-            ArticleDTO articleDTO = objectMapper.readValue(object,ArticleDTO.class);
+            byte[] bytesGiaiMa = Base64.getDecoder().decode(object);
+            String giaiMaBase64 = new String(bytesGiaiMa);
+            ArticleDTO articleDTO = objectMapper.readValue(giaiMaBase64,ArticleDTO.class);
             if(articleService.checkTitleArticle(articleDTO.getTitle())){
                 return ResponseEntity.badRequest().body(new ErrorResponse<>("Tên tiêu đề đã tồn tại"));
             }
@@ -56,8 +59,9 @@ public class ArticleController {
                                          @PathVariable("id") Long id) {
         try {
             ObjectMapper objectMapper = new ObjectMapper();
-            System.out.println(object);
-            ArticleDTO articleDTO = objectMapper.readValue(object,ArticleDTO.class);
+            byte[] bytesGiaiMa = Base64.getDecoder().decode(object);
+            String giaiMaBase64 = new String(bytesGiaiMa);
+            ArticleDTO articleDTO = objectMapper.readValue(giaiMaBase64,ArticleDTO.class);
             String image = null, idImage = null;
             Article article = articleService.findById(id).get();
             if(article==null) {
@@ -70,7 +74,9 @@ public class ArticleController {
                 idImage = data.get("public_id").toString();
                 articleService.updateArticle(articleDTO,id,image,idImage);
             }
-            articleService.updateArticle(articleDTO,id,null,null);
+            else {
+                articleService.updateArticle(articleDTO,id,null,null);
+            }
             return ResponseEntity.ok().body(new SuccessResponse<>("Đã cập nhật thành công"));
         }
         catch (ResourceAlreadyExitsException ex) {

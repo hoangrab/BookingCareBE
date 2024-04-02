@@ -48,7 +48,7 @@ public class ArticleService {
     @Transactional
     public void updateArticle(ArticleDTO articleDTO, Long id, String image, String idImage) {
         Article article = articleRepo.findById(id).get();
-        if(article.getTitle() != articleDTO.getTitle() && checkTitleArticle(articleDTO.getTitle())) {
+        if(!article.getTitle().equals(articleDTO.getTitle()) && checkTitleArticle(articleDTO.getTitle())) {
             throw new ResourceAlreadyExitsException("Tên tiêu đề đã trùng với 1 tin khác");
         }
         article.setTitle(articleDTO.getTitle());

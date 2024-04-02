@@ -13,5 +13,9 @@ import java.util.Optional;
 public interface UserRepo extends JpaRepository<User, Long> {
     User findByUsername(String username);
 
-    Page<User> findByMajorId(Long id, Pageable pageable);
+    @Query("SELECT u FROM User u " +
+            "WHERE (:id IS NULL OR u.major.id = :id) " +
+            "AND (:enabled IS NULL OR u.enabled = :enabled) " +
+            "AND (:fullname IS NULL OR u.fullname LIKE %:fullname%)")
+    Page<User> findByCustom(Long id, Boolean enabled, String fullname, Pageable pageable);
 }

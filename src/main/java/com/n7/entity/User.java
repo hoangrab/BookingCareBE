@@ -24,10 +24,10 @@ public class User {
     @Column(length = 100)
     private String fullname;
 
-    @Column(length = 100)
+    @Column(length = 100,unique = true,nullable = false)
     private String username;
 
-    @Column(length = 100)
+    @Column(length = 100,nullable = false)
     private String password;
 
     @Column(length = 20)
@@ -38,6 +38,9 @@ public class User {
 
     @Column(length = 100)
     private String avatar;
+
+    @Column(length = 100)
+    private String urlId;
 
     @Column(length = 255)
     private String description;

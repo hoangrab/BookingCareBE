@@ -22,7 +22,7 @@ public class MailService {
         messageHelper.setFrom(userFrom);
         messageHelper.setTo(receiver);
         messageHelper.setSubject(title);
-        messageHelper.setText("<html><body><h1 style='color:red'>"+content+"</h1></body></html>",true);
+        messageHelper.setText("<html><body><h1>"+content+"</h1></body></html>",true);
         mailSender.send(message);
     }
 }

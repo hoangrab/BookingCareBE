@@ -8,16 +8,20 @@ import com.n7.entity.ScheduleUser;
 import com.n7.entity.User;
 import com.n7.exception.ResourceAlreadyExitsException;
 import com.n7.exception.ResourceNotFoundException;
+import com.n7.model.BookingModel;
 import com.n7.repository.BookingRepo;
 import com.n7.repository.ScheduleRepo;
 import com.n7.repository.ScheduleUserRepo;
 import com.n7.repository.UserRepo;
+import com.n7.utils.ConvertTimeUtils;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.util.Date;
 import java.util.List;
 import java.util.Optional;
+import java.util.stream.Collectors;
 
 @Service
 @RequiredArgsConstructor
@@ -31,8 +35,11 @@ public class BookingService {
         return bookingRepo.findById(id);
     }
 
-    public List<Booking> findByParam(Status status,Long id) {
-        return bookingRepo.findAllByUserIdAndStatus(id,status);
+    public List<BookingModel> findByParam(Status status, Long id, String start, String end) {
+        Date en = null, st = null;
+        if(start!=null) st = ConvertTimeUtils.stringToDate(start);
+        if(end!=null) en = ConvertTimeUtils.stringToDate(end);
+        return bookingRepo.findByCustom(id,status,st,en).stream().map(this::convertEntityToModel).collect(Collectors.toList());
     }
 
     @Transactional
@@ -47,13 +54,12 @@ public class BookingService {
             }
         });
         // Save Booking
-        Booking booking = null;
-        convertDtoToEntity(booking,bookingDTO,Status.PENDING1);
+        Booking booking = convertDtoToEntity(bookingDTO,Status.PENDING1);
         booking.setUser(user.get());
         bookingRepo.save(booking);
 
         // Save Schedule of Doctor
-        Schedule schedule = new Schedule(bookingDTO.getDate(),bookingDTO.getSession());
+        Schedule schedule = new Schedule(ConvertTimeUtils.stringToDate(bookingDTO.getDate()),bookingDTO.getSession());
         scheduleRepo.save(schedule);
         ScheduleUser scheduleUser = new ScheduleUser();
         scheduleUser.setUser(user.get());
@@ -69,11 +75,30 @@ public class BookingService {
     }
 
     public void deleteBooking(Long id) {
-        bookingRepo.deleteById(id);
+        Optional<Booking> booking = bookingRepo.findById(id);
+        booking.get().setStatus(Status.FAILURE);
+        bookingRepo.save(booking.get());
     }
 
-    public void convertDtoToEntity(Booking booking, BookingDTO bookingDTO, Status status) {
-        booking = new Booking(bookingDTO.getName(),bookingDTO.getDob(),bookingDTO.getPhone(),bookingDTO.getEmail(),bookingDTO.getGender(),
-                bookingDTO.getAddress(),bookingDTO.getDate(),bookingDTO.getSession(),status,bookingDTO.getNote());
+    public Booking convertDtoToEntity(BookingDTO bookingDTO, Status status) {
+        return new Booking(bookingDTO.getName(),bookingDTO.getDob(),bookingDTO.getPhone(),bookingDTO.getEmail(),bookingDTO.getGender(),
+                bookingDTO.getAddress(),ConvertTimeUtils.stringToDate(bookingDTO.getDate()),bookingDTO.getSession(),status,bookingDTO.getNote());
+    }
+
+    public BookingModel convertEntityToModel(Booking booking) {
+        BookingModel bookingModel = new BookingModel();
+        bookingModel.setId(booking.getId());
+        bookingModel.setName(booking.getFullName());
+        bookingModel.setGender(booking.getGender());
+        bookingModel.setDob(booking.getDob());
+        bookingModel.setEmail(booking.getEmail());
+        bookingModel.setPhone(booking.getPhone());
+        bookingModel.setDate(ConvertTimeUtils.dateToString(booking.getDate()));
+        bookingModel.setSession(booking.getSession().toString());
+        bookingModel.setStatus(booking.getStatus().toString());
+        bookingModel.setNote(booking.getNote());
+        bookingModel.setNameDoctor(booking.getUser().getFullname());
+        bookingModel.setMajor(booking.getUser().getMajor().getName());
+        return bookingModel;
     }
 }

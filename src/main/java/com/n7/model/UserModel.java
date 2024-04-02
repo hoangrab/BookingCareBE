@@ -15,16 +15,18 @@ public class UserModel {
     private String userName;
     private String phone;
     private String email;
+    private String description;
     private Long roleId;
     private boolean enabled;
     private MajorModel major;
 
-    public UserModel(Long id, String avatar, String fullName, String userName,String phone, String email, Long roleId, boolean enabled, MajorModel major) {
+    public UserModel(Long id, String avatar, String fullName, String userName,String phone, String email,String description, Long roleId, boolean enabled, MajorModel major) {
         this.id = id;
         this.avatar = avatar;
         this.fullName = fullName;
         this.userName = userName;
         this.email = email;
+        this.description = description;
         this.phone = phone;
         this.roleId = roleId;
         this.enabled = enabled;

@@ -1,6 +1,7 @@
 package com.n7.controller;
 
 import com.n7.model.ScheduleModel;
+import com.n7.repository.ScheduleUserRepo;
 import com.n7.response.ErrorResponse;
 import com.n7.response.SuccessResponse;
 import com.n7.service.impl.ScheduleService;
@@ -25,8 +26,9 @@ import java.util.List;
 public class ScheduleController {
     private final ScheduleService scheduleService;
     private final UserService userService;
+    private final ScheduleUserRepo scheduleUserRepo;
 
-    @GetMapping("/schedule")
+    @GetMapping("schedule")
     public ResponseEntity<?> getAllSchedule(@RequestParam("idDoctor") Long idDoctor) {
         try{
             if(!userService.getDoctorById(idDoctor).isPresent()) {
@@ -38,4 +40,5 @@ public class ScheduleController {
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(new ErrorResponse<>("Error!!!"));
         }
     }
+
 }

@@ -13,11 +13,14 @@ import com.n7.service.impl.CloudinaryService;
 import com.n7.service.impl.MajorService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
+import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
+import java.nio.charset.StandardCharsets;
+import java.util.Base64;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
@@ -34,7 +37,9 @@ public class MajorController {
                                          @RequestPart("majordto") String object) {
         try {
             ObjectMapper objectMapper = new ObjectMapper();
-            MajorDTO majorDTO = objectMapper.readValue(object,MajorDTO.class);
+            byte[] bytesGiaiMa = Base64.getDecoder().decode(object);
+            String giaiMaBase64 = new String(bytesGiaiMa);
+            MajorDTO majorDTO = objectMapper.readValue(giaiMaBase64,MajorDTO.class);
             if(majorService.checkNameMajor(majorDTO.getName())){
                 return ResponseEntity.badRequest().body(new ErrorResponse<>("Tên khoa đã tồn tại"));
             }
@@ -53,10 +58,10 @@ public class MajorController {
                                          @PathVariable("id") Long id) {
         try {
             ObjectMapper objectMapper = new ObjectMapper();
-            System.out.println(object);
-            MajorDTO majorDTO = objectMapper.readValue(object,MajorDTO.class);
+            byte[] bytesGiaiMa = Base64.getDecoder().decode(object);
+            String giaiMaBase64 = new String(bytesGiaiMa);
+            MajorDTO majorDTO = objectMapper.readValue(giaiMaBase64,MajorDTO.class);
             String image = null, idImage = null;
-            System.out.println(majorDTO.getName()+"\t" + majorDTO.getDescription());
             Major major = majorService.findById(id).get();
             if(major==null) {
                 return ResponseEntity.status(HttpStatus.NOT_FOUND).body(new ErrorResponse<>("Khoa không tồn tại!!!"));

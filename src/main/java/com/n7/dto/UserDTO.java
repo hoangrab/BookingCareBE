@@ -22,8 +22,8 @@ public class UserDTO {
     @NotBlank(message = "Password can not blank")
     @Size(min = 6,max = 64,message = "Length of password must between 6 and 64")
     private String password;
-
-    @NotNull
-    private Long idRole;
-    private Long idMajor;
+    private String phone;
+    private String description;
+    private String email;
+    private Long majorId;
 }

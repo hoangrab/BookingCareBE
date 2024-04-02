@@ -1,12 +1,17 @@
 package com.n7.service.impl;
 
+import com.n7.dto.ArticleDTO;
 import com.n7.dto.UserDTO;
+import com.n7.entity.Article;
+import com.n7.entity.Major;
 import com.n7.entity.Role;
 import com.n7.entity.User;
+import com.n7.exception.ResourceAlreadyExitsException;
 import com.n7.exception.ResourceNotFoundException;
 import com.n7.model.CustomUserDetail;
 import com.n7.model.MajorModel;
 import com.n7.model.UserModel;
+import com.n7.repository.MajorRepo;
 import com.n7.repository.RoleRepo;
 import com.n7.repository.UserRepo;
 import com.n7.request.LoginRequest;
@@ -38,8 +43,10 @@ public class UserService {
     private final PasswordEncoder passwordEncoder;
     private final UserRepo userRepo;
     private final RoleRepo roleRepo;
+    private final MajorRepo majorRepo;
     private final AuthenticationManager authenticationManager;
     private final JwtService jwtService;
+
     public Map<String,String> login(LoginRequest loginRequest) {
         try{
             Map<String,String> map = new HashMap<>();
@@ -57,35 +64,108 @@ public class UserService {
         }
     }
 
-    @Transactional
-    public UserModel register(UserDTO userDTO) {
-        Optional<Role> role = roleRepo.findById(userDTO.getIdRole());
-        if(!role.isPresent()) throw new ResourceNotFoundException("Invalid id role");
-        User u = new User();
-        u.setPassword(passwordEncoder.encode(userDTO.getPassword()));
-        u.setUsername(userDTO.getUserName());
-        u.setFullname(userDTO.getFullName());
-        u.setRole(role.get());
-        u.setEnabled(true);
-        UserModel userModel = convertEntityToModel(u);
-        userRepo.save(u);
-        return userModel;
+//    @Transactional
+//    public UserModel register(UserDTO userDTO) {
+//        Optional<Role> role = roleRepo.findById(1L);
+//        if(!role.isPresent()) throw new ResourceNotFoundException("Invalid id role");
+//        User u = new User();
+//        u.setPassword(passwordEncoder.encode(userDTO.getPassword()));
+//        u.setUsername(userDTO.getUserName());
+//        u.setFullname(userDTO.getFullName());
+//        u.setRole(role.get());
+//        u.setEnabled(true);
+//        UserModel userModel = convertEntityToModel(u);
+//        userRepo.save(u);
+//        return userModel;
+//    }
+
+    public boolean checkName(String name) {
+        return userRepo.findByUsername(name)!=null;
     }
 
-    public List<UserModel> getAllDoctor(Pageable pageable) {
-        return userRepo.findAll(pageable).getContent().stream().map(this::convertEntityToModel).collect(Collectors.toList());
+    public void changePass(String pass, Long id) {
+        User user = userRepo.findById(id).orElseThrow(() -> new ResourceNotFoundException("Not found Doctor with id :" + id));
+        user.setPassword(passwordEncoder.encode(pass));
+        userRepo.save(user);
+    }
+
+    public void restore(Long id) {
+        User user = userRepo.findById(id).orElseThrow(() -> new ResourceNotFoundException("Not found Doctor with id :" + id));
+        user.setEnabled(true);
+        userRepo.save(user);
+    }
+
+
+    public List<UserModel> getAllDoctorBy(Long majorId,String name, Pageable pageable,String status) {
+        Boolean enabled = null;
+        if (status != null) enabled = (status.equals("true"))? true : false;
+        return userRepo.findByCustom(majorId,enabled,name,pageable)
+                .getContent().stream()
+                .filter(e -> e.getRole().getId() != 1)
+                .map(this::convertEntityToModel).collect(Collectors.toList());
     }
 
     public Optional<UserModel> getDoctorById(Long id) {
         return userRepo.findById(id).map(this::convertEntityToModel);
     }
 
-    public List<UserModel> getAllDoctorByMajor(Long majorId, Pageable pageable) {
-        if(majorId!=null) return userRepo.findByMajorId(majorId,pageable).getContent()
-                .stream()
-                .map(this::convertEntityToModel).collect(Collectors.toList());
-        return getAllDoctor(pageable);
+    @Transactional
+    public void saveDoctor(UserDTO userDTO, String image, String idImage) {
+        User user = new User();
+        Role role = roleRepo.findById(2L).get();
+        Major major = majorRepo.findById(userDTO.getMajorId()).get();
+        user.setRole(role);
+        user.setMajor(major);
+        convertDTOtoEntity(userDTO,user);
+        if(idImage != null && image != null) {
+            user.setUrlId(idImage);
+            user.setAvatar(image);
+        }
+        user.setEnabled(true);
+        user.setPassword(passwordEncoder.encode(userDTO.getPassword()));
+        userRepo.save(user);
     }
+
+    @Transactional
+    public void updateDoctor(UserDTO userDTO, Long id, String image, String idImage) {
+        User user = userRepo.findById(id).get();
+        if(user.getUsername().equals(userDTO.getUserName())==false && userRepo.findByUsername(userDTO.getUserName())!=null){
+            throw new ResourceAlreadyExitsException("UserName đã bị trùng");
+        }
+        if(image != null && idImage != null) {
+            user.setUrlId(idImage);
+            user.setAvatar(image);
+        }
+        Major major = majorRepo.findById(userDTO.getMajorId()).get();
+        if(major==null) {
+            throw new ResourceNotFoundException("Không tìm thấy khoa cần lưu");
+        }
+        else user.setMajor(major);
+        convertDTOtoEntity(userDTO,user);
+        userRepo.save(user);
+    }
+
+    @Transactional
+    public void deleteDoctor(Long id) {
+        User user = userRepo.findById(id).get();
+        if(user.isEnabled()==true) {
+            user.setEnabled(false);
+            userRepo.save(user);
+        }
+        else {
+            userRepo.deleteById(id);
+        }
+    }
+
+    public void convertDTOtoEntity(UserDTO userDTO, User user) {
+        user.setFullname(userDTO.getFullName());
+        user.setUsername(userDTO.getUserName());
+        user.setGmail(userDTO.getEmail());
+        user.setPhone(userDTO.getPhone());
+        user.setDescription(userDTO.getDescription());
+    }
+
+
 
     public UserModel convertEntityToModel(User user) {
         MajorModel majorModel = new MajorModel();
@@ -94,7 +174,7 @@ public class UserService {
             majorModel.setName(user.getMajor().getName());
         }
         UserModel userModel = new UserModel(user.getId(),user.getAvatar(),user.getFullname(),user.getUsername(),user.getPhone(),
-                user.getGmail(),user.getRole().getId(),user.isEnabled(),majorModel);
+                user.getGmail(), user.getDescription(), user.getRole().getId(),user.isEnabled(),majorModel);
         return userModel;
     }
 }

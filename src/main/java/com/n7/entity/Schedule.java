@@ -7,6 +7,7 @@ import lombok.Data;
 import lombok.NoArgsConstructor;
 
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
 
 @Data
@@ -19,7 +20,7 @@ public class Schedule {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    private String date;
+    private Date date;
 
     @Enumerated(EnumType.STRING)
     private TimeChoose session;
@@ -27,7 +28,7 @@ public class Schedule {
     @OneToMany(mappedBy = "schedule",cascade = CascadeType.ALL,fetch = FetchType.LAZY)
     private List<ScheduleUser> listUser = new ArrayList<>();
 
-    public Schedule(String date, TimeChoose session) {
+    public Schedule(Date date, TimeChoose session) {
         this.date = date;
         this.session = session;
     }

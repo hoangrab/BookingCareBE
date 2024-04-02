@@ -42,7 +42,7 @@ public class Booking {
     private String address;
 
     @Column
-    private String date;
+    private Date date;
 
     @Enumerated(EnumType.STRING)
     private TimeChoose session;
@@ -64,7 +64,7 @@ public class Booking {
     private User user;
 
     public Booking(String fullName, String dob, String phone, String email, Gender gender,
-                   String address, String date, TimeChoose session, Status status, String note) {
+                   String address, Date date, TimeChoose session, Status status, String note) {
         this.fullName = fullName;
         this.dob = dob;
         this.phone = phone;

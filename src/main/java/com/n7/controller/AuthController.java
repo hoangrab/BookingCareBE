@@ -34,17 +34,17 @@ public class AuthController {
         }
     }
 
-    @PostMapping("register")
-    public ResponseEntity<?> register(@Valid @RequestBody UserDTO userDTO) {
-        try{
-            UserModel u = userService.register(userDTO);
-            return ResponseEntity.ok().body(u);
-        }
-        catch (ResourceNotFoundException e){
-            return ResponseEntity.badRequest().body(new ErrorResponse<>(e.getMessage()));
-        }
-        catch (Exception e) {
-            return ResponseEntity.badRequest().body(new ErrorResponse<>(e.getMessage()));
-        }
-    }
+//    @PostMapping("register")
+//    public ResponseEntity<?> register(@Valid @RequestBody UserDTO userDTO) {
+//        try{
+//            UserModel u = userService.register(userDTO);
+//            return ResponseEntity.ok().body(u);
+//        }
+//        catch (ResourceNotFoundException e){
+//            return ResponseEntity.badRequest().body(new ErrorResponse<>(e.getMessage()));
+//        }
+//        catch (Exception e) {
+//            return ResponseEntity.badRequest().body(new ErrorResponse<>(e.getMessage()));
+//        }
+//    }
 }
