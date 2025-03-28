@@ -36,7 +36,7 @@ public class UserController {
     private final UserRepo userRepo;
     private final MailService mailService;
     private final PasswordEncoder passwordEncoder;
-    private final RedisService redisService;
+//    private final RedisService redisService;
 
     @GetMapping("/doctor/{id}")
     public ResponseEntity<?> getUserById(@PathVariable("id") Long id) {

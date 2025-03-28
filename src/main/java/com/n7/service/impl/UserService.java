@@ -46,7 +46,7 @@ public class UserService implements IUserService {
     private final MajorRepo majorRepo;
     private final AuthenticationManager authenticationManager;
     private final JwtService jwtService;
-    private final RedisService redisService;
+//    private final RedisService redisService;
 
     public Map<String,String> login(LoginRequest loginRequest) {
         try{
@@ -66,10 +66,10 @@ public class UserService implements IUserService {
     }
 
     public void logout(String token) {
-        if(!redisService.exists(token) && jwtService.isValidToken(token)){
-            redisService.set(token,"");
-            redisService.setTimeToLive(token,5); // remove token from redis in 5 minute
-        }
+//        if(!redisService.exists(token) && jwtService.isValidToken(token)){
+//            redisService.set(token,"");
+//            redisService.setTimeToLive(token,5); // remove token from redis in 5 minute
+//        }
     }
 
 //    @Transactional

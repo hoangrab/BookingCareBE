@@ -60,9 +60,9 @@ public class SecurityConfig {
                 .authenticationProvider(authenticationProvider())
                 .authorizeHttpRequests(requests ->
                         requests
-                                .requestMatchers(PUBLIC_URLS).permitAll()
-                                .requestMatchers(PRIVATE_URLS).hasAnyRole("ADMIN")
-                                .anyRequest().authenticated()
+//                                .requestMatchers(PUBLIC_URLS).permitAll()
+//                                .requestMatchers(PRIVATE_URLS).hasAnyRole("ADMIN")
+                                .anyRequest().permitAll()
                 )
                 .addFilterBefore(jwtAuthFilter, UsernamePasswordAuthenticationFilter.class)
                 .exceptionHandling(config -> config.accessDeniedHandler(customAccessDeniedHandler))

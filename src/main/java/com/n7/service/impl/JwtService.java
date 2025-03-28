@@ -26,18 +26,15 @@ public class JwtService {
     private SecretKey secretKey;
     private long timeExpiration;
     private UserRepo userRepo;
-    private RedisService redisService;
 
     @Autowired
     public JwtService(
             UserRepo userRepo,
-            RedisService redisService,
             @Value("${jwt.secret.key}") String secretKey,
             @Value("${jwt.expiration}") long timeExpiration) {
         this.userRepo = userRepo;
         this.secretKey = Keys.hmacShaKeyFor(secretKey.getBytes());
         this.timeExpiration = timeExpiration;
-        this.redisService = redisService;
     }
 
     public Claims buildClaims(int userId, String email, Collection<String> c, Date now, Date expi) {
@@ -73,7 +70,8 @@ public class JwtService {
         try {
             Jwts.parserBuilder().setSigningKey(secretKey).build().parseClaimsJws(token);
             // Nếu token đúng còn thời gian kiểm tra có trong redis token đã logout ko , nếu có return false;
-            return redisService.get(token) == null;
+//            return redisService.get(token) == null;
+            return true;
         }catch (Exception e) {
             return false;
         }
