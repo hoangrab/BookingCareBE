@@ -39,6 +39,8 @@ public class SecurityConfig {
             "/test/**",
             "/auth/login",
             "/api/v1/public/**",
+            "/swagger-ui/**",
+            "/swagger-ui.html",
     };
 
     private static final String[] PRIVATE_URLS = {

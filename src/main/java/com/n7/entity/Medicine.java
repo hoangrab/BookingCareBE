@@ -3,6 +3,7 @@ package com.n7.entity;
 import com.n7.constant.UnitMedicine;
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
+import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
@@ -10,6 +11,7 @@ import lombok.NoArgsConstructor;
 @NoArgsConstructor
 @AllArgsConstructor
 @Entity
+@Builder
 @Table(name = "medicine")
 public class Medicine {
     @Id
@@ -29,6 +31,8 @@ public class Medicine {
     @Enumerated(EnumType.STRING)
     private UnitMedicine unit;
 
+    @Column(name = "description")
+    private String description;
 //    @ManyToOne
 //    private TypeMedicine typeMedicine;
 }

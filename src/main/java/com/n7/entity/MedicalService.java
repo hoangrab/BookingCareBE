@@ -2,6 +2,7 @@ package com.n7.entity;
 
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
+import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
@@ -9,8 +10,9 @@ import lombok.NoArgsConstructor;
 @NoArgsConstructor
 @AllArgsConstructor
 @Entity
-@Table(name = "service")
-public class Service {
+@Builder
+@Table(name = "medical_service")
+public class MedicalService {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
@@ -20,5 +22,8 @@ public class Service {
 
     @Column(name = "money")
     private Long money;
+
+    @Column(name = "description")
+    private String description;
 
 }
