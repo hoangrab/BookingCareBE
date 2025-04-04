@@ -16,9 +16,9 @@ public class HistoryDTO {
     private String address;
     private String fromDate;
     private String toDate;
-    private String reason;
+    private String medicalSummary;
     private String medicineStr;
     private String serviceStr;
     private Long totalMoney;
-    private String status;
+    private Long bookingId;
 }

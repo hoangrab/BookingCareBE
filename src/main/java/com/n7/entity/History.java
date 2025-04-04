@@ -2,6 +2,7 @@ package com.n7.entity;
 
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
+import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
@@ -11,6 +12,7 @@ import java.util.Date;
 @Data
 @NoArgsConstructor
 @AllArgsConstructor
+@Builder
 public class History {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -19,6 +21,10 @@ public class History {
     // format: id thuoc: soluong;id thuoc: soluong
     @Column
     private String medicine;
+
+    // format: id;id
+    @Column
+    private String service;
 
     @Column
     private Date fromDate;
@@ -49,4 +55,13 @@ public class History {
     // tom tat benh tinh
     @Column
     private String medicalSummary;
+
+    @Column
+    private String nation;
+
+    @Column
+    private Long totalMoney;
+
+    @Column(name = "booking_id")
+    private Long bookingId;
 }
