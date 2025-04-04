@@ -34,6 +34,11 @@ public class DefaultData implements ApplicationRunner {
             role1 = new Role(RoleName.ROLE_DOCTOR,"Nothing");
             roleRepo.save(role1);
         }
+        Role role2 = roleRepo.findByName(RoleName.ROLE_USER);
+        if(role2==null) {
+            role2 = new Role(RoleName.ROLE_USER,"No permission");
+            roleRepo.save(role2);
+        }
         User user = userRepo.findByUsername("admin");
         if(user == null) {
             user = new User();

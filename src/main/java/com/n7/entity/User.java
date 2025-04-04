@@ -50,6 +50,9 @@ public class User {
 
     private boolean enabled;
 
+    @Column(length = 50)
+    private String captcha;
+
     @CreationTimestamp
     private LocalDateTime createdAt;
 

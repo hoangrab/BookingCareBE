@@ -87,7 +87,7 @@ public class ArticleController {
         }
     }
 
-    @PreAuthorize("hasAuthority('ROLE_ADMIN')")
+//    @PreAuthorize("hasAuthority('ROLE_ADMIN')")
     @GetMapping(value = "articles")
     public ResponseEntity<?> getAllArticle() {
         try{

@@ -13,9 +13,14 @@ import java.util.Optional;
 public interface UserRepo extends JpaRepository<User, Long> {
     User findByUsername(String username);
 
+    User findByGmailAndEnabled(String email,boolean enable);
+
+    User findByGmailAndEnabledAndCaptcha(String email,boolean enable,String captcha);
+
     @Query("SELECT u FROM User u " +
             "WHERE (:id IS NULL OR u.major.id = :id) " +
             "AND (:enabled IS NULL OR u.enabled = :enabled) " +
             "AND (:fullname IS NULL OR u.fullname LIKE %:fullname%)")
     Page<User> findByCustom(Long id, Boolean enabled, String fullname, Pageable pageable);
+
 }

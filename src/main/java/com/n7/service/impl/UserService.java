@@ -1,5 +1,6 @@
 package com.n7.service.impl;
 
+import com.n7.constant.RoleName;
 import com.n7.dto.ArticleDTO;
 import com.n7.dto.UserDTO;
 import com.n7.entity.Article;
@@ -17,6 +18,7 @@ import com.n7.repository.UserRepo;
 import com.n7.request.LoginRequest;
 import com.n7.request.RegisterRequest;
 import com.n7.service.IUserService;
+import jakarta.mail.MessagingException;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.PageRequest;
@@ -31,10 +33,7 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-import java.util.Optional;
+import java.util.*;
 import java.util.stream.Collectors;
 
 @Service
@@ -46,6 +45,7 @@ public class UserService implements IUserService {
     private final MajorRepo majorRepo;
     private final AuthenticationManager authenticationManager;
     private final JwtService jwtService;
+    private final MailService mailService;
 //    private final RedisService redisService;
 
     public Map<String,String> login(LoginRequest loginRequest) {
@@ -158,6 +158,41 @@ public class UserService implements IUserService {
             user.setEnabled(true);
         }
         userRepo.save(user);
+    }
+
+    @Transactional
+    public void createUse(LoginRequest loginRequest) throws MessagingException {
+        String captcha = UUID.randomUUID().toString().substring(0,6);
+        User user = new User();
+        if(userRepo.findByGmailAndEnabled(loginRequest.getGmail(),true) == null) {
+            user.setGmail(loginRequest.getGmail());
+            user.setPhone(loginRequest.getPhone());
+            user.setEnabled(true);
+            user.setPassword(passwordEncoder.encode("123456"));
+            Role role = roleRepo.findByName(RoleName.ROLE_USER);
+            user.setRole(role);
+        }
+        user.setCaptcha(captcha);
+        userRepo.save(user);
+        mailService.sendMail(loginRequest.getGmail(),"Xác thực đăng nhập","<h2>Mã capcha: "+ captcha +" </h2>");
+    }
+
+    public Map<String,String> validateCaptcha(LoginRequest loginRequest) {
+        User user = userRepo.findByGmailAndEnabledAndCaptcha(loginRequest.getGmail(),true,loginRequest.getCaptcha());
+        if(user!=null) {
+            Map<String,String> map = new HashMap<>();
+            Authentication authentication = authenticationManager.authenticate(
+                    new UsernamePasswordAuthenticationToken(loginRequest.getUsername(),"123456"));
+            SecurityContextHolder.getContext().setAuthentication(authentication);
+            UserDetails userDetails = (UserDetails) authentication.getPrincipal();
+            String jwt = jwtService.generateToken((CustomUserDetail) userDetails);
+            map.put("accessToken",jwt);
+            map.put("roleId",String.valueOf(((CustomUserDetail) userDetails).getRoleId()));
+            map.put("userId",String.valueOf(((CustomUserDetail) userDetails).getUserId()));
+            return map;
+        }else {
+            throw new BadCredentialsException("Invalid username or password");
+        }
     }
 
     @Transactional

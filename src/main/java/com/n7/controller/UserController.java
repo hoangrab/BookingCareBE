@@ -191,4 +191,27 @@ public class UserController {
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(new ErrorResponse<>(e.getMessage()));
         }
     }
+
+    @PostMapping("/user")
+    public ResponseEntity<?> createUser(@RequestBody LoginRequest loginRequest) {
+        try {
+            userService.createUse(loginRequest);
+            return ResponseEntity.ok().body(null);
+        }catch (Exception ex) {
+            ex.printStackTrace();
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(new ErrorResponse<>(ex.getMessage()));
+        }
+    }
+
+    @PostMapping("/validate-captcha")
+    public ResponseEntity<?> validateCaptcha(@RequestBody LoginRequest loginRequest) {
+        try {
+            Map<String,String> u = userService.validateCaptcha(loginRequest);
+            return ResponseEntity.ok().body(new SuccessResponse<>("Login success",u));
+        }catch (Exception e) {
+            e.printStackTrace();
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(new ErrorResponse<>(e.getMessage()));
+        }
+    }
+
 }

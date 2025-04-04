@@ -56,13 +56,11 @@ public class BookingService implements IBookingService {
         Booking booking = convertDtoToEntity(bookingDTO,Status.PENDING);
         booking.setUser(user.get());
         bookingRepo.save(booking);
-        System.out.println("chay 1");
         // Save Schedule of Doctor
         Optional<Hour> hour = hourRepo.findById(booking.getIdHour());
         if(hour.isEmpty()) {
             throw new ResourceNotFoundException("Lich dat với id không hợp lệ");
         }
-        System.out.println("chay 2");
         Schedule schedule = new Schedule(ConvertTimeUtils.stringToDate(bookingDTO.getDate()),hour.get());
         scheduleRepo.save(schedule);
         System.out.println("chayj3");
